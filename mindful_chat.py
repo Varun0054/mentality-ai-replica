@@ -176,6 +176,48 @@ with gr.Blocks(title="Mentality Ai", theme=theme, css=custom_css) as demo:
     """)
     
     with gr.Tabs():
+        with gr.TabItem("🏠 Home"):
+            gr.HTML("""
+            <div style="font-family: 'Helvetica Neue', Arial, sans-serif; text-align: center; color: #2D3748; padding: 40px;">
+                <div style="background: linear-gradient(135deg, #E0F7FA 0%, #E6FFFA 100%); padding: 60px; border-radius: 20px; margin-bottom: 40px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
+                    <h1 style="font-size: 3.5em; font-weight: 700; color: #2C7A7B; margin-bottom: 20px;">Welcome to Mentality Ai</h1>
+                    <p style="font-size: 1.4em; color: #4A5568; max-width: 800px; margin: 0 auto; line-height: 1.6;">
+                        Your peaceful mental health companion. We are here to listen, understand, and help you find your calm through advanced AI and serene visualizations.
+                    </p>
+                </div>
+
+                <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 50px; flex-wrap: wrap;">
+                    <div style="background: white; padding: 30px; border-radius: 15px; width: 300px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.3s ease;">
+                        <div style="font-size: 3em; margin-bottom: 15px;">🧠</div>
+                        <h3 style="color: #2C7A7B; font-size: 1.5em; margin-bottom: 10px;">Empathic Chat</h3>
+                        <p style="color: #718096; line-height: 1.5;">Express your thoughts freely. Our AI listens with empathy and understanding.</p>
+                    </div>
+                    <div style="background: white; padding: 30px; border-radius: 15px; width: 300px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.3s ease;">
+                        <div style="font-size: 3em; margin-bottom: 15px;">🎨</div>
+                        <h3 style="color: #2C7A7B; font-size: 1.5em; margin-bottom: 10px;">Visual Serenity</h3>
+                        <p style="color: #718096; line-height: 1.5;">Generate calming images based on your description to soothe your mind.</p>
+                    </div>
+                    <div style="background: white; padding: 30px; border-radius: 15px; width: 300px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.3s ease;">
+                        <div style="font-size: 3em; margin-bottom: 15px;">🗣️</div>
+                        <h3 style="color: #2C7A7B; font-size: 1.5em; margin-bottom: 10px;">Voice Interaction</h3>
+                        <p style="color: #718096; line-height: 1.5;">Speak naturally to Mentality Ai. We listen to your voice.</p>
+                    </div>
+                </div>
+
+                <div style="background-color: #F7FAFC; padding: 40px; border-radius: 20px; border: 1px solid #E2E8F0;">
+                    <h2 style="color: #2D3748; margin-bottom: 30px; font-size: 2em;">Meet the Creators</h2>
+                    <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; font-size: 1.2em;">
+                        <div style="background: white; padding: 15px 30px; border-radius: 50px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); color: #2C7A7B; font-weight: 600;">Varun Bhagwat</div>
+                        <div style="background: white; padding: 15px 30px; border-radius: 50px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); color: #2C7A7B; font-weight: 600;">Arjun</div>
+                        <div style="background: white; padding: 15px 30px; border-radius: 50px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); color: #2C7A7B; font-weight: 600;">Ishwar</div>
+                    </div>
+                    <p style="margin-top: 30px; color: #718096;">
+                        <strong>Contact:</strong> <a href="mailto:varunbhagwat948@gmail.com" style="color: #38B2AC; text-decoration: none;">varunbhagwat948@gmail.com</a>
+                    </p>
+                </div>
+            </div>
+            """)
+
         with gr.TabItem("💬 Chat"):
              with gr.Row():
                 with gr.Column():
