@@ -1,0 +1,269 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #319795;
+  /* Teal-500 equivalent */
+  --primary-dark: #285E61;
+  --bg-color: #F0F8FF;
+  /* AliceBlue */
+  --card-bg: #FFFFFF;
+  --text-primary: #2D3748;
+  --text-secondary: #718096;
+  --header-color: #2C7A7B;
+  --border-radius: 15px;
+  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 600;
+  color: var(--header-color);
+}
+
+/* Header */
+.app-header {
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+  background-color: transparent;
+}
+
+.app-title {
+  font-size: 3em;
+  font-weight: 300;
+  margin: 0;
+  color: var(--header-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.app-subtitle {
+  font-size: 1.2em;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+/* Navbar / Tabs */
+.nav-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem 0;
+  border-bottom: 2px solid #E2E8F0;
+  padding-bottom: 0px;
+}
+
+.nav-tab {
+  padding: 0.5rem 1rem;
+  font-size: 1.1em;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav-tab.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+}
+
+.nav-tab:hover {
+  color: var(--header-color);
+}
+
+/* Generic Container */
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Chat Styling */
+.chat-window {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #E2E8F0;
+}
+
+.chat-header-pill {
+  background-color: #E6FFFA;
+  color: #285E61;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  display: inline-block;
+  font-weight: 600;
+  margin: 1rem;
+  align-self: flex-start;
+  font-size: 0.9em;
+}
+
+.message-list {
+  flex: 1;
+  padding: 1rem 2rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.message-bubble {
+  max-width: 80%;
+  padding: 1rem 1.5rem;
+  border-radius: var(--border-radius);
+  line-height: 1.5;
+  position: relative;
+  font-size: 1rem;
+}
+
+.msg-user {
+  align-self: flex-end;
+  background-color: #E6FFFA;
+  /* Light teal */
+  color: #2C7A7B;
+  border: 1px solid #B2F5EA;
+  border-bottom-right-radius: 4px;
+}
+
+.msg-bot {
+  align-self: flex-start;
+  background-color: #F7FAFC;
+  color: #2D3748;
+  border: 1px solid #EDF2F7;
+  border-bottom-left-radius: 4px;
+}
+
+/* Input Area */
+.input-area {
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-top: 1px solid #E2E8F0;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.input-field {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #FFFFFF;
+}
+
+.input-field:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(49, 151, 149, 0.2);
+}
+
+.btn {
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #285E61;
+}
+
+.btn-secondary {
+  background-color: white;
+  color: var(--text-primary);
+  border: 1px solid #E2E8F0;
+}
+
+.btn-secondary:hover {
+  background-color: #F7FAFC;
+}
+
+.footer {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+  font-size: 0.9em;
+  margin-top: 2rem;
+}
+
+/* Cards */
+.card {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  padding: 2rem;
+  border: 1px solid #E2E8F0;
+  transition: transform 0.2s;
+  height: 100%;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Visualization Page */
+.viz-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.label-pill {
+  background-color: #E6FFFA;
+  color: #285E61;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.9em;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+}
+
+.viz-input-area {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .viz-grid {
+    grid-template-columns: 1fr;
+  }
+}
