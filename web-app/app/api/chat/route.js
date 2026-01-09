@@ -5,11 +5,11 @@ export async function POST(req) {
     try {
         const { message } = await req.json();
 
-        const apiKey = process.env.OPENROUTER_API_KEY;
+        const apiKey = process.env.OPENROUTER_CHAT_KEY;
         if (!apiKey) {
-            console.error("Missing OPENROUTER_API_KEY in environment variables.");
+            console.error("Missing OPENROUTER_CHAT_KEY in environment variables.");
             return NextResponse.json(
-                { error: "Configuration Error", details: "OpenRouter API Key is missing. Please check .env.local." },
+                { error: "Configuration Error", details: "OpenRouter Chat Key is missing. Please check .env.local." },
                 { status: 501 }
             );
         }

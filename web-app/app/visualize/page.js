@@ -6,24 +6,11 @@ export default function Visualize() {
     const [prompt, setPrompt] = useState("");
     const [isGenerating, setIsGenerating] = useState(false);
     const [imageUrl, setImageUrl] = useState(null);
-    const [isLangflow, setIsLangflow] = useState(false);
 
     const handleGenerate = async () => {
         if (!prompt) return;
         setIsGenerating(true);
         setImageUrl(null);
-
-        if (isLangflow) {
-            // Mimic the python code's "generate_image" which returned a blank white image
-            // We'll just set a placeholder or a white image data URL
-            setTimeout(() => {
-                // 512x512 white image data URL
-                const whiteImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIBAQMAAACQ+VNQAAAAA1BMVEX///+nxBvIAAAANElEQVR42u3BAQ0AAADCoPdPbQ43oAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/B48IAABF02wiQAAAABJRU5ErkJggg==";
-                setImageUrl(whiteImage);
-                setIsGenerating(false);
-            }, 1000); // Fake delay
-            return;
-        }
 
         try {
             const res = await fetch("/api/visualize", {
@@ -35,17 +22,17 @@ export default function Visualize() {
             const data = await res.json();
 
             if (data.error) {
-                alert(`Error: ${data.details || data.error}`);
+                // Simplified error handling as requested
+                const detail = data.details || data.error;
+                alert(`Generation failed: ${detail}`);
             } else if (data.imageUrl) {
                 setImageUrl(data.imageUrl);
-            } else {
-                alert("No image returned. Please try again.");
             }
         } catch (error) {
             console.error("Generation error:", error);
             alert("Failed to generate image.");
         } finally {
-            if (!isLangflow) setIsGenerating(false);
+            setIsGenerating(false);
         }
     };
 
@@ -53,18 +40,6 @@ export default function Visualize() {
         <div className="container" style={{ padding: "2rem 1rem" }}>
             <div style={{ marginBottom: "1rem" }}>
                 <h3 style={{ fontSize: "1.5rem", fontWeight: "600", color: "#2D3748", margin: 0 }}>Visual Serenity</h3>
-            </div>
-
-            <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-                <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.9rem", color: "#4a5568" }}>
-                    <input
-                        type="checkbox"
-                        checked={isLangflow}
-                        onChange={(e) => setIsLangflow(e.target.checked)}
-                        style={{ accentColor: "#319795" }}
-                    />
-                    Switch to Langflow (Demo)
-                </label>
             </div>
 
             <div className="viz-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
@@ -77,7 +52,7 @@ export default function Visualize() {
                             <textarea
                                 className="input-field"
                                 rows="2"
-                                placeholder={isLangflow ? "Enter image description (Demo)..." : "A calm blue ocean at sunset"}
+                                placeholder="A calm blue ocean at sunset"
                                 value={prompt}
                                 onChange={(e) => setPrompt(e.target.value)}
                                 style={{

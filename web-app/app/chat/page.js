@@ -20,6 +20,15 @@ export default function Chat() {
         // Load config
         const baseUrl = localStorage.getItem("langflow_base_url");
         const apiKey = localStorage.getItem("langflow_api_key");
+
+        // Load Mode Preference
+        const savedMode = localStorage.getItem("app_mode");
+        if (savedMode === "langflow") {
+            setIsLangflow(true);
+        } else {
+            setIsLangflow(false);
+        }
+
         setConfig({ baseUrl, apiKey });
 
         // Load persisted messages
@@ -171,15 +180,6 @@ export default function Chat() {
                 {/* Header Controls (Switches) */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.5rem", background: "#f8f9fa", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
                     <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-                        <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.9rem", color: "#4a5568" }}>
-                            <input
-                                type="checkbox"
-                                checked={isLangflow}
-                                onChange={(e) => setIsLangflow(e.target.checked)}
-                                style={{ accentColor: "#319795" }}
-                            />
-                            Switch to Langflow
-                        </label>
                         <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.9rem", color: "#4a5568" }}>
                             <input
                                 type="checkbox"

@@ -1,6 +1,21 @@
+"use client";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 export default function Home() {
+  const [appMode, setAppMode] = useState("external"); // 'external' or 'langflow'
+
+  useEffect(() => {
+    const savedMode = localStorage.getItem("app_mode");
+    if (savedMode) setAppMode(savedMode);
+  }, []);
+
+  const toggleMode = () => {
+    const newMode = appMode === "external" ? "langflow" : "external";
+    setAppMode(newMode);
+    localStorage.setItem("app_mode", newMode);
+  };
+
   return (
     <div className="container">
       <div style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif", textAlign: "center", color: "#2D3748", padding: "40px" }}>
@@ -9,6 +24,25 @@ export default function Home() {
           <p style={{ fontSize: "1.4em", color: "#4A5568", maxWidth: "800px", margin: "0 auto", lineHeight: "1.6" }}>
             Your peaceful mental health companion. We are here to listen, understand, and help you find your calm through advanced AI and serene visualizations.
           </p>
+
+          {/* Mode Switcher Button (Secretive) */}
+          <button
+            onClick={toggleMode}
+            style={{
+              marginTop: "20px",
+              background: "none",
+              border: "1px solid #CBD5E0",
+              borderRadius: "20px",
+              padding: "5px 15px",
+              fontSize: "0.8em",
+              color: "#A0AEC0",
+              cursor: "pointer",
+              transition: "all 0.2s"
+            }}
+            title="Toggle System Mode"
+          >
+            System Mode
+          </button>
         </div>
 
         <div style={{ display: "flex", justifyContent: "center", gap: "30px", marginBottom: "50px", flexWrap: "wrap" }}>
@@ -47,6 +81,11 @@ export default function Home() {
           <p style={{ marginTop: "30px", color: "#718096" }}>
             <strong>Contact:</strong> <a href="mailto:varunbhagwat948@gmail.com" style={{ color: "#38B2AC", textDecoration: "none" }}>varunbhagwat948@gmail.com</a>
           </p>
+        </div>
+
+        {/* Mode Indicator */}
+        <div style={{ marginTop: "20px", fontSize: "0.7em", color: "#E2E8F0" }}>
+          System Mode: {appMode === "langflow" ? "Langflow" : "External AI"}
         </div>
       </div>
     </div>

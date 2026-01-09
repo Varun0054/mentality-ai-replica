@@ -4,10 +4,12 @@ export async function POST(req) {
     try {
         const { prompt } = await req.json();
 
-        const apiKey = process.env.OPENROUTER_API_KEY;
+        const apiKey = process.env.OPENROUTER_IMAGE_KEY;
+        console.log("Using Image Key (prefix):", apiKey ? apiKey.substring(0, 15) + "..." : "undefined");
+
         if (!apiKey) {
             return NextResponse.json(
-                { error: "Configuration Error", details: "OpenRouter API Key is missing." },
+                { error: "Configuration Error", details: "OpenRouter Image Key is missing." },
                 { status: 501 }
             );
         }
@@ -58,7 +60,7 @@ export async function POST(req) {
     } catch (error) {
         console.error("Image Generation Error:", error);
         return NextResponse.json(
-            { error: "Internal Server Error", details: error.message },
+            { error: "Image Generation Failed", details: `OpenRouter API Error: ${error.message}` },
             { status: 500 }
         );
     }
