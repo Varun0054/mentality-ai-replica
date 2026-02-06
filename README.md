@@ -1,84 +1,120 @@
-# Mentality-AI
+<div align="center">
 
-**Real-time Cognitive Bio-marker Analysis & Visualization Platform**
+# 🧠 Mentality-AI
+### The Cognitive Interface for Real-Time Mental State Analytics
 
-Mentality-AI is an advanced behavioral analytics interface designed to measure, analyze, and visualize cognitive load, stress trends, and decision-making patterns in real-time. Unlike static dashboards, this system is powered by a live, in-memory telemetry engine that derives insights directly from user interactions.
+![Version](https://img.shields.io/badge/version-2.0.0-blue.svg?style=for-the-badge)
+![Status](https://img.shields.io/badge/status-OPERATIONAL-success.svg?style=for-the-badge)
+![Tech](https://img.shields.io/badge/tech-Next.js_16_|_React_19-black.svg?style=for-the-badge)
 
-![Mentality-AI Dashboard](https://via.placeholder.com/800x450?text=Mentality-AI+Dashboard+Preview)
+<p align="center">
+  <img src="https://via.placeholder.com/1200x600/0f1115/6366f1?text=Mentality-AI+Dashboard+Preview" alt="Mentality-AI Dashboard" width="100%" />
+</p>
 
-## 🚀 Key Features
+[Live Demo](#) · [Report Bug](https://github.com/Varun0054/mentality-ai-replica/issues) · [Request Feature](https://github.com/Varun0054/mentality-ai-replica/issues)
 
-### 1. Real-time Analytics Engine
-A deterministic, session-based backend (`lib/analytics.js`) that computes biometrics without external sensors.
-- **Cognitive Load Meter**: dynamically calculated based on interaction frequency, typing speed, and idle latency.
-- **Stress Trends**: Rolling 24h window simulation detecting anomalies and variances.
-- **Decision Velocity Heatmap**: Tracks response times to identify fatigue or flow states.
+</div>
 
-### 2. Cognitive Interface (Chat)
-A reimagined chat experience focused on professional analysis.
-- **Console Style**: "System Operational" status, glass-morphic message cards.
-- **Inline Metrics**: Every AI response includes real-time confidence, load, and focus scores.
-- **Voice-Enabled**: Full speech-to-text and text-to-speech integration.
+---
 
-### 3. Visual Intelligence Dashboard
-- **Anomaly Detection**: Automatically flags irregular data points in trend graphs.
-- **Explainable AI (XAI)**: "Explain" buttons expose the logic behind every calculated metric.
-- **Focus Shield**: Automated distraction blocking triggered by high cognitive load states.
+## 📖 Introduction
 
-### 4. Generative Visualization
-- Integrated AI image generation to visualize mental states (e.g., "Calm blue ocean").
+**Mentality-AI** is not just a chatbot. It is a **Cognitive Bio-marker Analysis Platform** that uses deterministic behavioral telemetry to measure your mental state in real-time. 
 
-## 🛠️ Tech Stack
+By analyzing your interaction patterns—typing rhythm, decision latency, and task-switching frequency—it builds a live profile of your **Cognitive Load**, **Stress Levels**, and **Focus Stability**, all without needing wearable sensors.
 
-- **Frontend**: Next.js 16 (React 19), styling with custom CSS variables & Glassmorphism.
-- **Backend Service**: Node.js API Routes (Serverless-ready).
-- **State Management**: React Hooks (`useAnalytics`) for global telemetry.
-- **AI Integration**: OpenRouter SDK, Google Gemini (Generative models), Langflow (Agent orchestration).
-- **Language**: JavaScript (ES6+).
+---
 
-## ⚡ Getting Started
+## 🎮 Usability Guide: How to Use the System
+
+### 1. The Cognitive Interface (Chat)
+*Located at `/chat`*
+
+This is your primary command center. Unlike standard chats, this interface treats every input as a data point.
+
+-   **System Analysis Logs**: The left panel displays the raw "thought process" of the AI. Watch it to see how your inputs are being classified.
+-   **Inline Metrics**: Every response from the AI comes with three real-time tags:
+    -   `Cognitive Load`: Your estimated mental burden (0-100%).
+    -   `Focus`: Your current attention stability.
+    -   `Confidence`: The AI's certainty in its assessment.
+-   **Voice Command**: Click the `Microphone` icon to speak. The system uses browser-native speech recognition for low-latency input.
+
+### 2. Visual Intelligence Dashboard
+*Located at `/visualize`*
+
+The heart of the analytics engine. This page updates **every second** based on your session behavior.
+
+| Metric | What It Means | How to Influence It |
+| :--- | :--- | :--- |
+| **Cognitive Load** | Efficiency of your mental processing. | **Rise:** Click rapidly/multitask. **Drop:** Pause or idle. |
+| **Stress Trends** | 24-hour rolling window (simulated) of your load. | Sustained high activity causes spikes (red dots). |
+| **Decision Velocity** | Heatmap of how fast you make choices. | Darker blocks = faster decisions. |
+| **AI Insight** | Objective textual analysis of your patterns. | Change your behavior to see new insights generate. |
+
+> **Pro Tip**: Click the **"ⓘ Explain"** button on any card to see the exact logic used to calculate that metric.
+
+### 3. Focus Shield
+*Located on the Dashboard*
+
+When your **Cognitive Load exceeds 75%**, the **Focus Shield** automatically activates.
+-   **Visual Indicator**: A pulsing indigo ring appears.
+-   **Effect**: The interface reduces visual noise to help you regain composure.
+
+---
+
+## ⚡ Technical Quick Start
 
 ### Prerequisites
-- Node.js 18+
-- npm or yarn
+-   **Node.js 18+** is required.
+-   **npm** or **yarn**.
 
 ### Installation
 
-1.  Clone the repository:
+1.  **Clone the Repository**
     ```bash
     git clone https://github.com/Varun0054/mentality-ai-replica.git
     cd mentality-ai-replica/web-app
     ```
 
-2.  Install dependencies:
+2.  **Install Dependencies**
     ```bash
     npm install
-    # or
-    yarn install
     ```
 
-3.  Set up environment variables (`.env.local`):
+3.  **Configure Environment**
+    Create a `.env.local` file in the `web-app` directory:
     ```env
     NEXT_PUBLIC_OPENROUTER_API_KEY=your_key_here
     NEXT_PUBLIC_GEMINI_API_KEY=your_key_here
     ```
 
-4.  Run the development server:
+4.  **Launch System**
     ```bash
     npm run dev
     ```
-
-5.  Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## 🧠 Usage Guide
-
-- **Dashboard**: Watch metrics update live as you interact with the page.
-- **Chat**: Speak or type to the AI; observe the "System Analysis" logs.
-- **Visualization**: Switch to the "Generative" tab to create calm imagery.
-
-## 🛡️ Privacy & Ethics
-
-This system relies entirely on *behavioral telemetry* (mouse movements, keypresses, timing) and does not record personal biological data. All processing is done in-memory per session and is reset upon reload.
+    Access the interface at `http://localhost:3000`.
 
 ---
-*Built for the Future of Mental Health Tech.*
+
+## 🏗️ Architecture
+
+The system operates on a **Session-Based In-Memory Architecture**.
+
+-   **Frontend**: Next.js 16 (App Router) with React 19.
+-   **Styling**: Custom CSS Variables + Glassmorphism (No Tailwind dependency).
+-   **Backend Logic**: `lib/analytics.js` (Singleton Pattern).
+-   **Telemetry**: `useAnalytics` Hook intercepts all user events globally.
+
+### Data Privacy & Ethics
+This system uses **Behavioral Telemetry** only.
+-   ❌ No biological data is collected.
+-   ❌ No camera/microphone data is stored.
+-   ❌ No database persistence (Session resets on reload).
+
+---
+
+<div align="center">
+
+**Built with 💙 for the Future of Mental Health Tech**
+
+</div>
