@@ -1,3 +1,5 @@
+
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -11,3 +13,12 @@ env.bak/
 venv.bak/
 .vscode/
 *.spec
+
+# Node/Next.js (Global ignores if not caught by sub-gitignore)
+node_modules/
+.next/
+out/
+build/
+dist/
+.DS_Store
+*.log

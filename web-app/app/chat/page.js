@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
 import ReactMarkdown from 'react-markdown';
 
 export default function Chat() {
@@ -17,41 +16,27 @@ export default function Chat() {
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
-        // Load config
         const baseUrl = localStorage.getItem("langflow_base_url");
         const apiKey = localStorage.getItem("langflow_api_key");
-
-        // Load Mode Preference
         const savedMode = localStorage.getItem("app_mode");
-        if (savedMode === "langflow") {
-            setIsLangflow(true);
-        } else {
-            setIsLangflow(false);
-        }
+
+        if (savedMode === "langflow") setIsLangflow(true);
+        else setIsLangflow(false);
 
         setConfig({ baseUrl, apiKey });
 
-        // Load persisted messages
         const savedMessages = localStorage.getItem("chat_history");
         if (savedMessages) {
             try {
                 setMessages(JSON.parse(savedMessages));
             } catch (e) {
-                console.error("Failed to parse chat history", e);
-                // Fallback to initial greeting
-                setMessages([
-                    { role: "assistant", content: "Hello! I am Mentality AI. How are you feeling today?" }
-                ]);
+                setMessages([{ role: "assistant", content: "System initialized. Ready for analysis." }]);
             }
         } else {
-            // Initial greeting
-            setMessages([
-                { role: "assistant", content: "Hello! I am Mentality AI. How are you feeling today?" }
-            ]);
+            setMessages([{ role: "assistant", content: "System initialized. Ready for analysis." }]);
         }
     }, []);
 
-    // Save messages whenever they change
     useEffect(() => {
         if (messages.length > 0) {
             localStorage.setItem("chat_history", JSON.stringify(messages));
@@ -62,7 +47,6 @@ export default function Chat() {
     const handleSend = async (text = input) => {
         if (!text.trim()) return;
 
-        // Add User Message
         const newMessages = [...messages, { role: "user", content: text }];
         setMessages(newMessages);
         setInput("");
@@ -70,22 +54,18 @@ export default function Chat() {
 
         try {
             let data;
-
             if (isLangflow) {
-                // Langflow API Call
                 const res = await fetch("/api/langflow", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         message: text,
-                        // Pass stored keys if available, else API route uses env/defaults
                         flowId: localStorage.getItem("langflow_flow_id"),
                         apiKey: localStorage.getItem("langflow_api_key"),
                     }),
                 });
                 data = await res.json();
             } else {
-                // Standard Online API Call (OpenRouter)
                 const res = await fetch("/api/chat", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -104,15 +84,11 @@ export default function Chat() {
             } else {
                 const botResponse = data.message;
                 setMessages((prev) => [...prev, { role: "assistant", content: botResponse }]);
-
-                // Voice Output Logic
-                if (useVoiceOutput) {
-                    speak(botResponse);
-                }
+                if (useVoiceOutput) speak(botResponse);
             }
         } catch (err) {
             console.error("Chat Error:", err);
-            setMessages((prev) => [...prev, { role: "assistant", content: "Something went wrong. Please check your connection." }]);
+            setMessages((prev) => [...prev, { role: "assistant", content: "Connection interrupted. Retrying..." }]);
         } finally {
             setIsLoading(false);
         }
@@ -120,7 +96,6 @@ export default function Chat() {
 
     const speak = (text) => {
         if ("speechSynthesis" in window) {
-            // Simple sanitization to remove markdown symbols for clearer speech
             const cleanText = text.replace(/[*#_`]/g, '');
             const utterance = new SpeechSynthesisUtterance(cleanText);
             window.speechSynthesis.speak(utterance);
@@ -129,19 +104,13 @@ export default function Chat() {
 
     const toggleRecording = () => {
         if (isRecording) {
-            // Stop handled by logic below, or ideally by the API itself if we had access to the instance
-            // Since we re-instantiate, we rely on 'onend' or just state reset.
-            // For simplicity in this functional component without efficient ref management for 'recognition':
             setIsRecording(false);
-            // Note: Actual 'stop' of the browser mic requires calling .stop() on the instance.
-            // In this simplified version, we just reset UI state. 
-            // In a robust app, we'd use a ref for the recognition instance.
             return;
         }
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) {
-            alert("Browser does not support Speech Recognition.");
+            alert("Speech Recognition not supported in this browser environment.");
             return;
         }
 
@@ -152,180 +121,420 @@ export default function Chat() {
 
         recognition.onstart = () => setIsRecording(true);
         recognition.onend = () => setIsRecording(false);
-        recognition.onerror = (event) => {
-            console.error("Speech error", event.error);
-            setIsRecording(false);
-        };
+        recognition.onerror = () => setIsRecording(false);
 
         recognition.onresult = (event) => {
             const transcript = event.results[0][0].transcript;
             setInput(transcript);
-            handleSend(transcript); // Auto-send on voice end
+            handleSend(transcript);
         };
 
         recognition.start();
     };
 
     const clearChat = () => {
-        if (confirm("Are you sure you want to clear the chat history?")) {
+        if (confirm("Purge local analysis history?")) {
             localStorage.removeItem("chat_history");
-            setMessages([{ role: "assistant", content: "Hello! I am Mentality AI. How are you feeling today?" }]);
+            setMessages([{ role: "assistant", content: "History purged. System ready." }]);
         }
     };
 
     return (
-        <div className="container" style={{ height: "calc(100vh - 120px)", display: "flex", flexDirection: "column", paddingBottom: "1rem" }}>
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "1rem", minHeight: 0 }}>
-
-                {/* Header Controls (Switches) */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.5rem", background: "#f8f9fa", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                    <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-                        <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.9rem", color: "#4a5568" }}>
-                            <input
-                                type="checkbox"
-                                checked={useVoiceOutput}
-                                onChange={(e) => setUseVoiceOutput(e.target.checked)}
-                                style={{ accentColor: "#319795" }}
-                            />
-                            Enable Voice Output
-                        </label>
+        <div className="chat-layout container">
+            {/* Sidebar Panel */}
+            <aside className="chat-sidebar glass-panel">
+                <div className="sidebar-header">
+                    <h3>Analysis Log</h3>
+                    <button onClick={clearChat} className="icon-btn" title="Clear History">↺</button>
+                </div>
+                <div className="history-list">
+                    <div className="history-item active">
+                        <span className="status-dot"></span>
+                        <div className="history-text">Current Session</div>
+                        <div className="history-time">Now</div>
                     </div>
-                    <button
-                        onClick={clearChat}
-                        title="Clear Conversation"
-                        style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.2rem", opacity: 0.6 }}
-                    >
-                        🗑️
-                    </button>
+                    {/* Placeholder for future sessions */}
                 </div>
 
-                {/* Chatbot Window */}
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
-                    <div id="chat-window" className="chat-window" style={{
-                        flex: 1,
-                        overflowY: "auto",
-                        padding: "1rem",
-                        background: "#ffffff",
-                        borderRadius: "15px",
-                        boxShadow: "0 4px 6px rgba(0,0,0,0.05)",
-                        marginBottom: "1rem"
-                    }}>
-                        <div className="message-list">
-                            {messages.map((msg, i) => (
-                                <div key={i} style={{
-                                    alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
-                                    maxWidth: "80%",
-                                    marginBottom: "0.5rem",
-                                    display: "flex",
-                                    gap: "0.5rem",
-                                    flexDirection: msg.role === "user" ? "row-reverse" : "row",
-                                    alignItems: "flex-end"
-                                }}>
-                                    <div className={`message-bubble ${msg.role === "user" ? "msg-user" : "msg-bot"}`} style={{
-                                        background: msg.role === "user" ? "#E6FFFA" : "#F7FAFC",
-                                        color: msg.role === "user" ? "#2C7A7B" : "#2D3748",
-                                        border: msg.role === "user" ? "1px solid #B2F5EA" : "1px solid #EDF2F7",
-                                        padding: "0.75rem 1rem",
-                                        borderRadius: "15px",
-                                    }}>
-                                        <div style={{ whiteSpace: "normal" }}>
-                                            <ReactMarkdown>{msg.content}</ReactMarkdown>
-                                        </div>
-                                    </div>
-                                    <button
-                                        onClick={() => speak(msg.content)}
-                                        title="Read Aloud"
-                                        style={{
-                                            background: "none",
-                                            border: "none",
-                                            cursor: "pointer",
-                                            fontSize: "1rem",
-                                            padding: "2px",
-                                            opacity: 0.5,
-                                            marginBottom: "5px"
-                                        }}
-                                    >
-                                        🔊
-                                    </button>
+                <div className="sidebar-settings">
+                    <label className="setting-toggle">
+                        <input
+                            type="checkbox"
+                            checked={useVoiceOutput}
+                            onChange={(e) => setUseVoiceOutput(e.target.checked)}
+                        />
+                        <span>Voice Synthesis</span>
+                    </label>
+                    <div className="system-status">
+                        Mode: <span className="mono">{isLangflow ? 'LANGFLOW' : 'EXTERNAL API'}</span>
+                    </div>
+                </div>
+            </aside>
+
+            {/* Main Chat Area */}
+            <main className="chat-main glass-panel">
+                {/* 1. Top Bar Inside Chat Panel */}
+                <div className="chat-header">
+                    <div className="header-left">
+                        <span className="header-title">Cognitive Interface</span>
+                        <span className="header-meta">Session: Active • Real-time Analysis Enabled</span>
+                    </div>
+                    <div className="header-right">
+                        <span className="pulse-dot"></span>
+                        <button className="icon-btn" title="System Status">ⓘ System Status</button>
+                    </div>
+                </div>
+
+                <div className="messages-container">
+                    {messages.map((msg, i) => (
+                        <div key={i} className={`message-row ${msg.role}`}>
+                            <div className="message-content glass-card">
+                                {/* 2. Replace Labels */}
+                                <div className="message-role mono">
+                                    {msg.role === 'assistant' ? 'SYSTEM ANALYSIS' : 'INPUT STREAM'}
                                 </div>
-                            ))}
-                            <div ref={messagesEndRef} />
-                            {isLoading && <div style={{ color: "#718096", marginLeft: "1rem", fontStyle: "italic" }}>Mentality AI is thinking...</div>}
+                                <div className="markdown-body">
+                                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                                </div>
+                                {/* 4. Inline Metric Chips (AI Only) */}
+                                {msg.role === 'assistant' && (
+                                    <div className="metric-chips">
+                                        <span className="chip">Cognitive Load <span className="val">42%</span></span>
+                                        <span className="chip">Focus <span className="val good">Stable</span></span>
+                                        <span className="chip">Confidence <span className="val high">High</span></span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    </div>
+                    ))}
+                    {isLoading && (
+                        <div className="message-row assistant">
+                            <div className="message-content glass-card">
+                                <div className="message-role mono">SYSTEM ANALYSIS</div>
+                                <div className="typing-indicator">
+                                    <span></span><span></span><span></span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    <div ref={messagesEndRef} />
                 </div>
 
-                {/* Input Row */}
-                <div style={{ display: "flex", gap: "10px", alignItems: "stretch", height: "60px" }}>
-                    {/* Textbox - Scale 4 */}
-                    <div style={{ flex: 4 }}>
-                        <textarea
+                <div className="input-area">
+                    <div className="input-wrapper">
+                        <button
+                            className={`mic-btn ${isRecording ? 'recording' : ''}`}
+                            onClick={toggleRecording}
+                            title="Toggle Voice Input"
+                        >
+                            {isRecording ? 'stop' : 'mic'}
+                        </button>
+                        <input
+                            type="text"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
-                            placeholder={isLangflow ? "Ask Langflow..." : "Type your thoughts here..."}
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                                padding: "1rem",
-                                borderRadius: "8px",
-                                border: "1px solid #E2E8F0",
-                                resize: "none",
-                                fontSize: "1rem",
-                                display: "flex",
-                                alignItems: "center",
-                                outline: "none",
-                                boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
-                            }}
+                            onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                            placeholder="Input command or query..."
+                            className="chat-input"
                         />
-                    </div>
-
-                    {/* Voice Button - Scale 1 */}
-                    <div style={{ flex: 1 }}>
-                        <button
-                            onClick={toggleRecording}
-                            className="btn"
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                                background: isRecording ? "#FED7D7" : "#FFFFFF",
-                                color: isRecording ? "#C53030" : "#2D3748",
-                                border: "1px solid #E2E8F0",
-                                justifyContent: "center",
-                                fontSize: "1rem",
-                                fontWeight: "600",
-                                cursor: "pointer",
-                                borderRadius: "8px"
-                            }}
-                        >
-                            {isRecording ? "⏹️ Stop" : "🎤 Speak"}
-                        </button>
-                    </div>
-
-                    {/* Send Button - Scale 1 */}
-                    <div style={{ flex: 1 }}>
-                        <button
-                            onClick={() => handleSend()}
-                            className="btn"
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                                background: "#319795", // Teal-500
-                                color: "white",
-                                border: "none",
-                                justifyContent: "center",
-                                fontSize: "1rem",
-                                fontWeight: "600",
-                                cursor: "pointer",
-                                borderRadius: "8px"
-                            }}
-                        >
-                            Send
+                        <button className="send-btn" onClick={() => handleSend()}>
+                            ➞
                         </button>
                     </div>
                 </div>
+            </main>
 
-            </div>
+            <style jsx>{`
+                .chat-layout {
+                    display: grid;
+                    grid-template-columns: 280px 1fr;
+                    gap: 1.5rem;
+                    height: calc(100vh - 100px);
+                    padding-bottom: 1.5rem;
+                    padding-top: 2rem;
+                }
+
+                .chat-sidebar {
+                    display: flex;
+                    flex-direction: column;
+                    padding: 1.5rem;
+                }
+
+                .sidebar-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 2rem;
+                    padding-bottom: 1rem;
+                    border-bottom: 1px solid var(--glass-border);
+                }
+
+                .history-item {
+                    display: flex;
+                    align-items: center;
+                    padding: 1rem;
+                    background: rgba(255,255,255,0.03);
+                    border-radius: 8px;
+                    border: 1px solid var(--glass-border);
+                    cursor: pointer;
+                }
+
+                .history-item.active {
+                    background: rgba(99, 102, 241, 0.1);
+                    border-color: var(--accent-indigo);
+                }
+
+                .status-dot {
+                    width: 8px;
+                    height: 8px;
+                    background: var(--accent-cyan);
+                    border-radius: 50%;
+                    margin-right: 12px;
+                }
+
+                .history-text {
+                    flex: 1;
+                    font-size: 0.9rem;
+                    font-weight: 500;
+                }
+
+                .history-time {
+                    font-size: 0.75rem;
+                    color: var(--text-secondary);
+                }
+
+                .sidebar-settings {
+                    margin-top: auto;
+                    padding-top: 1.5rem;
+                    border-top: 1px solid var(--glass-border);
+                }
+
+                .setting-toggle {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    font-size: 0.9rem;
+                    color: var(--text-secondary);
+                    cursor: pointer;
+                    margin-bottom: 1rem;
+                }
+
+                .system-status {
+                    font-size: 0.75rem;
+                    color: var(--text-secondary);
+                }
+
+                .chat-main {
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                    position: relative;
+                }
+
+                /* Header Styles */
+                .chat-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 1rem 2rem;
+                    border-bottom: 1px solid var(--glass-border);
+                    background: rgba(0,0,0,0.2);
+                }
+                .header-title {
+                    font-weight: 600;
+                    margin-right: 1rem;
+                    color: white;
+                }
+                .header-meta {
+                    font-size: 0.75rem;
+                    color: var(--text-secondary);
+                    font-family: 'JetBrains Mono', monospace;
+                }
+                .header-right {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                }
+                .pulse-dot {
+                    width: 8px;
+                    height: 8px;
+                    background: #4ade80;
+                    border-radius: 50%;
+                    box-shadow: 0 0 10px #4ade80;
+                    animation: pulse-green 2s infinite;
+                }
+
+                .messages-container {
+                    flex: 1;
+                    overflow-y: auto;
+                    padding: 2rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.5rem;
+                }
+
+                .message-row {
+                    display: flex;
+                    width: 100%;
+                }
+                
+                .message-row.user {
+                    justify-content: flex-end;
+                }
+
+                /* 3. Message Containers */
+                .message-content {
+                    max-width: 75%;
+                    padding: 1.25rem;
+                    border-radius: 12px;
+                    position: relative;
+                }
+
+                .glass-card {
+                    background: rgba(255, 255, 255, 0.03);
+                    border: 1px solid var(--glass-border);
+                    backdrop-filter: blur(10px);
+                }
+
+                .message-row.assistant .message-content {
+                    border-left: 3px solid var(--accent-cyan);
+                    background: linear-gradient(90deg, rgba(6, 182, 212, 0.05) 0%, rgba(0,0,0,0) 100%);
+                }
+
+                .message-row.user .message-content {
+                    background: transparent;
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    text-align: right;
+                }
+
+                .message-role {
+                    font-size: 0.65rem;
+                    color: var(--text-secondary);
+                    margin-bottom: 0.75rem;
+                    letter-spacing: 1.5px;
+                    text-transform: uppercase;
+                    display: block;
+                }
+
+                .message-row.user .message-role {
+                    text-align: right;
+                    color: var(--accent-indigo);
+                }
+
+                .markdown-body {
+                    line-height: 1.6;
+                    font-size: 0.95rem;
+                    color: rgba(255, 255, 255, 0.9);
+                }
+
+                /* 4. Inline Metric Chips */
+                .metric-chips {
+                    display: flex;
+                    gap: 0.75rem;
+                    margin-top: 1rem;
+                    padding-top: 0.75rem;
+                    border-top: 1px solid rgba(255, 255, 255, 0.05);
+                }
+                .chip {
+                    font-size: 0.7rem;
+                    color: var(--text-secondary);
+                    font-family: 'JetBrains Mono', monospace;
+                    background: rgba(0,0,0,0.2);
+                    padding: 2px 8px;
+                    border-radius: 4px;
+                }
+                .val { color: white; margin-left: 4px; }
+                .val.good { color: #4ade80; }
+                .val.high { color: var(--accent-cyan); }
+
+                .input-area {
+                    padding: 1.5rem;
+                    background: rgba(0,0,0,0.2);
+                    border-top: 1px solid var(--glass-border);
+                }
+
+                .input-wrapper {
+                    display: flex;
+                    gap: 1rem;
+                    align-items: center;
+                    background: var(--bg-dark);
+                    padding: 0.5rem;
+                    border-radius: 12px;
+                    border: 1px solid var(--glass-border);
+                    transition: border-color 0.2s;
+                }
+
+                .input-wrapper:focus-within {
+                    border-color: var(--accent-indigo);
+                }
+
+                .chat-input {
+                    flex: 1;
+                    background: transparent;
+                    border: none;
+                    color: white;
+                    padding: 0.5rem;
+                    font-size: 1rem;
+                    outline: none;
+                    font-family: inherit;
+                }
+
+                .mic-btn, .send-btn {
+                    background: transparent;
+                    border: none;
+                    color: var(--text-secondary);
+                    cursor: pointer;
+                    padding: 0.5rem;
+                    font-family: 'JetBrains Mono', monospace;
+                    transition: color 0.2s;
+                }
+
+                .mic-btn:hover, .send-btn:hover {
+                    color: white;
+                }
+
+                .mic-btn.recording {
+                    color: #ef4444;
+                    animation: pulse-red 2s infinite;
+                }
+
+                .typing-indicator span {
+                    display: inline-block;
+                    width: 6px;
+                    height: 6px;
+                    background: var(--accent-cyan);
+                    border-radius: 50%;
+                    margin-right: 4px;
+                    animation: typing 1.4s infinite;
+                }
+
+                .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+                .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+                @keyframes typing {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-4px); }
+                }
+
+                @keyframes pulse-red {
+                    0% { opacity: 1; }
+                    50% { opacity: 0.5; }
+                    100% { opacity: 1; }
+                }
+                @keyframes pulse-green {
+                    0% { opacity: 1; box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+                    70% { opacity: 1; box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
+                    100% { opacity: 1; box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+                }
+
+                .icon-btn {
+                    background: none;
+                    border: none;
+                    color: var(--text-secondary);
+                    cursor: pointer;
+                    font-size: 0.85rem;
+                }
+            `}</style>
         </div>
     );
 }

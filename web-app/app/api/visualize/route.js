@@ -4,63 +4,71 @@ export async function POST(req) {
     try {
         const { prompt } = await req.json();
 
-        const apiKey = process.env.OPENROUTER_IMAGE_KEY;
-        console.log("Using Image Key (prefix):", apiKey ? apiKey.substring(0, 15) + "..." : "undefined");
+        const apiKey = process.env.STABILITY_API_KEY;
+        console.log("Using Stability AI Key (prefix):", apiKey ? apiKey.substring(0, 10) + "..." : "undefined");
 
         if (!apiKey) {
             return NextResponse.json(
-                { error: "Configuration Error", details: "OpenRouter Image Key is missing." },
+                { error: "Configuration Error", details: "Stability AI API Key is missing." },
                 { status: 501 }
             );
         }
 
-        console.log("Generating image for prompt (using raw fetch):", prompt);
+        console.log("Generating image with Stability AI (SDXL) for prompt:", prompt);
 
-        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        // Usage of Stable Diffusion XL 1.0
+        const engineId = "stable-diffusion-xl-1024-v1-0";
+        const url = `https://api.stability.ai/v1/generation/${engineId}/text-to-image`;
+
+        const response = await fetch(url, {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${apiKey}`,
-                "HTTP-Referer": "http://localhost:3000",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                Authorization: `Bearer ${apiKey}`,
             },
             body: JSON.stringify({
-                model: "bytedance-seed/seedream-4.5",
-                messages: [
-                    { role: "user", content: prompt }
+                text_prompts: [
+                    {
+                        text: prompt,
+                        weight: 1,
+                    },
                 ],
-                modalities: ["image", "text"]
-            })
+                cfg_scale: 7,
+                height: 1024,
+                width: 1024,
+                samples: 1,
+                steps: 30,
+            }),
         });
 
-        const completion = await response.json();
-        console.log("OpenRouter Raw Response:", JSON.stringify(completion, null, 2));
+        const result = await response.json();
+        // console.log("Stability AI Raw Response:", JSON.stringify(result, null, 2));
 
         if (!response.ok) {
-            throw new Error(completion.error?.message || "OpenRouter API request failed");
+            const errorMessage = result.message || `Stability API request failed: ${response.status} ${response.statusText}`;
+            throw new Error(errorMessage);
         }
 
-        const message = completion.choices[0]?.message;
         let imageUrl = null;
 
-        // Check for images in the message (non-standard field)
-        if (message.images && message.images.length > 0) {
-            imageUrl = message.images[0].url || message.images[0].image_url?.url;
+        if (result.artifacts && result.artifacts.length > 0) {
+            const image = result.artifacts[0];
+            // Stability returns base64 string
+            imageUrl = `data:image/png;base64,${image.base64}`;
         }
 
-        // If still no image, check content for markdown image
-        if (!imageUrl && message.content) {
-            const match = message.content.match(/\((https?:\/\/.*?)\)/) || message.content.match(/(https?:\/\/[^\s]+)/);
-            if (match) {
-                imageUrl = match[1];
-            }
+        if (!imageUrl) {
+            console.error("No image found in Stability response:", result);
+            throw new Error("No image data found in the API response.");
         }
 
-        return NextResponse.json({ imageUrl: imageUrl, rawResponse: completion });
+        return NextResponse.json({ imageUrl: imageUrl, rawResponse: result });
 
     } catch (error) {
         console.error("Image Generation Error:", error);
         return NextResponse.json(
-            { error: "Image Generation Failed", details: `OpenRouter API Error: ${error.message}` },
+            { error: "Image Generation Failed", details: `Stability AI API Error: ${error.message}` },
             { status: 500 }
         );
     }
