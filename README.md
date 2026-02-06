@@ -1,41 +1,84 @@
-# Mentality Ai 🧠
+# Mentality-AI
 
-**Mentality Ai** is a peaceful, AI-powered mental health companion. It combines voice interaction, calming visuals, and intelligent conversation to help users find serenity.
+**Real-time Cognitive Bio-marker Analysis & Visualization Platform**
 
-## ✨ Features
-- **Peaceful Voice**: Speaks responses using a gentle Text-to-Speech engine.
-- **Voice Input**: Talk directly to the AI using the microphone.
-- **Visualizations**: Generates calming placeholder images on command (e.g., "Generate a sunrise").
-- **Tabbed Interface**: 
-  - **Chat**: Clean text and voice interface.
-  - **Visualization**: Dedicated space for visual calmness.
+Mentality-AI is an advanced behavioral analytics interface designed to measure, analyze, and visualize cognitive load, stress trends, and decision-making patterns in real-time. Unlike static dashboards, this system is powered by a live, in-memory telemetry engine that derives insights directly from user interactions.
 
-## 🛠️ Setup Instructions
+![Mentality-AI Dashboard](https://via.placeholder.com/800x450?text=Mentality-AI+Dashboard+Preview)
 
-### 1. Prerequisites
-- Python 3.8 or higher installed.
+## 🚀 Key Features
 
-### 2. Installation
-Clone the repository and install the dependencies:
+### 1. Real-time Analytics Engine
+A deterministic, session-based backend (`lib/analytics.js`) that computes biometrics without external sensors.
+- **Cognitive Load Meter**: dynamically calculated based on interaction frequency, typing speed, and idle latency.
+- **Stress Trends**: Rolling 24h window simulation detecting anomalies and variances.
+- **Decision Velocity Heatmap**: Tracks response times to identify fatigue or flow states.
 
-```bash
-pip install -r requirements.txt
-# If you face audio issues on Windows:
-pip install pyaudio pypiwin32
-```
+### 2. Cognitive Interface (Chat)
+A reimagined chat experience focused on professional analysis.
+- **Console Style**: "System Operational" status, glass-morphic message cards.
+- **Inline Metrics**: Every AI response includes real-time confidence, load, and focus scores.
+- **Voice-Enabled**: Full speech-to-text and text-to-speech integration.
 
-### 3. Running the App
-Run the application with:
-```bash
-python mindful_chat.py
-```
-The app will open at: **http://127.0.0.1:7880**
+### 3. Visual Intelligence Dashboard
+- **Anomaly Detection**: Automatically flags irregular data points in trend graphs.
+- **Explainable AI (XAI)**: "Explain" buttons expose the logic behind every calculated metric.
+- **Focus Shield**: Automated distraction blocking triggered by high cognitive load states.
 
-## 💡 How to Use
-1. **Talk**: Click "🎤 Speak" and share your thoughts.
-2. **Type**: Use the chat box for text interaction.
-3. **Visualize**: Go to the *Visualization* tab and describe a scene to see a calming image.
+### 4. Generative Visualization
+- Integrated AI image generation to visualize mental states (e.g., "Calm blue ocean").
 
-## ⚠️ Troubleshooting
-- **"My brain is unreachable"**: Ensure your Langflow backend is running on port `7860`.
-- **Audio loop errors**: Ensure you have installed `pypiwin32` and `pythoncom` is handled (already fixed in code).
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 16 (React 19), styling with custom CSS variables & Glassmorphism.
+- **Backend Service**: Node.js API Routes (Serverless-ready).
+- **State Management**: React Hooks (`useAnalytics`) for global telemetry.
+- **AI Integration**: OpenRouter SDK, Google Gemini (Generative models), Langflow (Agent orchestration).
+- **Language**: JavaScript (ES6+).
+
+## ⚡ Getting Started
+
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+
+### Installation
+
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/Varun0054/mentality-ai-replica.git
+    cd mentality-ai-replica/web-app
+    ```
+
+2.  Install dependencies:
+    ```bash
+    npm install
+    # or
+    yarn install
+    ```
+
+3.  Set up environment variables (`.env.local`):
+    ```env
+    NEXT_PUBLIC_OPENROUTER_API_KEY=your_key_here
+    NEXT_PUBLIC_GEMINI_API_KEY=your_key_here
+    ```
+
+4.  Run the development server:
+    ```bash
+    npm run dev
+    ```
+
+5.  Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 🧠 Usage Guide
+
+- **Dashboard**: Watch metrics update live as you interact with the page.
+- **Chat**: Speak or type to the AI; observe the "System Analysis" logs.
+- **Visualization**: Switch to the "Generative" tab to create calm imagery.
+
+## 🛡️ Privacy & Ethics
+
+This system relies entirely on *behavioral telemetry* (mouse movements, keypresses, timing) and does not record personal biological data. All processing is done in-memory per session and is reset upon reload.
+
+---
+*Built for the Future of Mental Health Tech.*
